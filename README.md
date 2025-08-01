@@ -152,22 +152,6 @@ netstat -an | findstr ":5678"
 netstat -an | findstr ":8080"
 ```
 
-### Chatwoot não conecta no banco
-- Verifique se o PostgreSQL subiu corretamente
-- Confirme as credenciais no .env
-
-### Evolution API não conecta WhatsApp
-- Verifique se o QR Code foi escaneado
-- Confirme se a instância está ativa na interface
-
-## 📚 Próximos passos
-
-1. **Configure os webhooks** entre os serviços
-2. **Crie workflows no n8n** para automatizar respostas
-3. **Configure templates** de mensagens no Chatwoot
-4. **Implemente lógica de roteamento** baseada em palavras-chave
-5. **Configure backup** dos dados importantes
-
 ## 🔒 Segurança
 
 Para uso em produção:
