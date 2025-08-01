@@ -68,13 +68,16 @@ services:
       - SERVER_PORT=8080
       - CORS_ORIGIN=*
       - DEL_INSTANCE=false
-      - DATABASE_ENABLED=false  # Desabilitando banco temporariamente
+      - DATABASE_ENABLED=false
       - REDIS_ENABLED=true
       - REDIS_URI=redis://:default@redis:6379
       - RABBITMQ_ENABLED=false
       - WEBSOCKET_ENABLED=false
       - CONFIG_SESSION_PHONE_CLIENT=Evolution API
       - CONFIG_SESSION_PHONE_NAME=Chrome
+      - AUTHENTICATION_TYPE=apikey
+      - AUTHENTICATION_API_KEY=evolution-api-key-123
+      - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
     volumes:
       - evolution_instances:/evolution/instances
       - evolution_store:/evolution/store

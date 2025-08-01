@@ -1,0 +1,49 @@
+{
+  "id": "n8n-whatsapp-stack-env",
+  "name": "n8n WhatsApp Stack Environment",
+  "values": [
+    {
+      "key": "chatwoot_url",
+      "value": "http://localhost:3000",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "n8n_url",
+      "value": "http://localhost:5678",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "evolution_url",
+      "value": "http://localhost:8080",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "chatwoot_token",
+      "value": "6hbvQveRz31HTnjMbKVp5cxC",
+      "enabled": true,
+      "type": "secret"
+    },
+    {
+      "key": "evolution_token",
+      "value": "evolution-api-key-123",
+      "enabled": true,
+      "type": "secret"
+    },
+    {
+      "key": "account_id",
+      "value": "2",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "webhook_path",
+      "value": "webhook-test/zapizi",
+      "enabled": true,
+      "type": "default"
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

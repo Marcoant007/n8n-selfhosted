@@ -1,0 +1,184 @@
+{
+  "info": {
+    "name": "n8n WhatsApp Stack",
+    "description": "Collection para testar integração n8n + Chatwoot + Evolution API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "n8n Tests",
+      "item": [
+        {
+          "name": "Test n8n Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sender\": \"João Silva\",\n  \"message\": \"Olá, preciso de ajuda!\",\n  \"conversation_id\": 123\n}"
+            },
+            "url": {
+              "raw": "{{n8n_url}}/webhook-test/zapizi",
+              "host": ["{{n8n_url}}"],
+              "path": ["webhook-test", "zapizi"]
+            }
+          }
+        },
+        {
+          "name": "Test n8n Webhook (GET)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{n8n_url}}/webhook-test/zapizi?sender=Maria&message=oi",
+              "host": ["{{n8n_url}}"],
+              "path": ["webhook-test", "zapizi"],
+              "query": [
+                {
+                  "key": "sender",
+                  "value": "Maria"
+                },
+                {
+                  "key": "message",
+                  "value": "oi"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chatwoot API",
+      "item": [
+        {
+          "name": "Get Account Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "api_access_token",
+                "value": "{{chatwoot_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{chatwoot_url}}/api/v1/accounts/2",
+              "host": ["{{chatwoot_url}}"],
+              "path": ["api", "v1", "accounts", "2"]
+            }
+          }
+        },
+        {
+          "name": "List Conversations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "api_access_token",
+                "value": "{{chatwoot_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{chatwoot_url}}/api/v1/accounts/2/conversations",
+              "host": ["{{chatwoot_url}}"],
+              "path": ["api", "v1", "accounts", "2", "conversations"]
+            }
+          }
+        },
+        {
+          "name": "Create Contact",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "api_access_token",
+                "value": "{{chatwoot_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria Silva\",\n  \"phone_number\": \"+5511888888888\",\n  \"additional_attributes\": {\n    \"source\": \"postman_test\",\n    \"message\": \"Contato criado via Postman\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{chatwoot_url}}/api/v1/accounts/2/contacts",
+              "host": ["{{chatwoot_url}}"],
+              "path": ["api", "v1", "accounts", "2", "contacts"]
+            }
+          }
+        },
+        {
+          "name": "List Contacts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "api_access_token",
+                "value": "{{chatwoot_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{chatwoot_url}}/api/v1/accounts/2/contacts",
+              "host": ["{{chatwoot_url}}"],
+              "path": ["api", "v1", "accounts", "2", "contacts"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Evolution API",
+      "item": [
+        {
+          "name": "Test Evolution API",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{evolution_url}}",
+              "host": ["{{evolution_url}}"]
+            }
+          }
+        },
+        {
+          "name": "Create WhatsApp Instance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instanceName\": \"meu-whatsapp\",\n  \"qrcode\": true\n}"
+            },
+            "url": {
+              "raw": "{{evolution_url}}/instance/create",
+              "host": ["{{evolution_url}}"],
+              "path": ["instance", "create"]
+            }
+          }
+        },
+        {
+          "name": "List Instances",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{evolution_url}}/instance/fetchInstances",
+              "host": ["{{evolution_url}}"],
+              "path": ["instance", "fetchInstances"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
