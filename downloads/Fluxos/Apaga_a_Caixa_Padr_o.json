@@ -1,0 +1,195 @@
+{
+  "name": "Apaga a Caixa Padrão",
+  "nodes": [
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "channel_api",
+          "mode": "list",
+          "cachedResultName": "channel_api"
+        },
+        "firesOn": "DELETE",
+        "additionalFields": {},
+        "options": {}
+      },
+      "id": "9c23170d-cd22-4cd2-96f3-4199dedab65e",
+      "name": "Postgres Trigger",
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        220
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "4qVyUlJzBTt1tpVw",
+          "name": "Banco Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "75620144-49ea-46bc-aeff-e51134d2b053",
+              "name": "caixa",
+              "value": "={{ $('Postgres Trigger').item.json.payload.webhook_url.split('/').pop() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "34a70cba-e3c2-4832-8495-fa789d75dcde",
+      "name": "Pega o nome da Sessão",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "=DELETE",
+        "url": "={{ $('Info Base').item.json.urlapi }}/instance/logout/{{ $json.caixa }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Info Base').item.json.apikey }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e21c0c57-764b-4a22-becb-62c3604977c4",
+      "name": "Desconecta Estancia",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "=DELETE",
+        "url": "={{ $('Info Base').item.json.urlapi }}/instance/delete/{{ $('Pega o nome da Sessão').item.json.caixa }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Info Base').item.json.apikey }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "74f1d1d4-4633-429d-b047-07d29ed33276",
+      "name": "Delta Estancia",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98f9267a-8e6e-4dcb-8908-5c1570bcb0ec",
+              "name": "urlapi",
+              "value": "url da api evolution",
+              "type": "string"
+            },
+            {
+              "id": "66304908-724e-4a3f-a68f-4cb1aea2151b",
+              "name": "apikey",
+              "value": "api key da evolution",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "501c9a65-8458-4379-8beb-602a524a4856",
+      "name": "Info Base",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        220
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Postgres Trigger": {
+      "main": [
+        [
+          {
+            "node": "Info Base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pega o nome da Sessão": {
+      "main": [
+        [
+          {
+            "node": "Desconecta Estancia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desconecta Estancia": {
+      "main": [
+        [
+          {
+            "node": "Delta Estancia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Info Base": {
+      "main": [
+        [
+          {
+            "node": "Pega o nome da Sessão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f9312000-d7f2-4b84-8a62-b699e5049b34",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "33738330930e3881dd5571eca013f36ddf8aab20e4ea5c1f2ebaf4a2b4668ac6"
+  },
+  "id": "5Wy76rnpsXm8oxWC",
+  "tags": []
+}

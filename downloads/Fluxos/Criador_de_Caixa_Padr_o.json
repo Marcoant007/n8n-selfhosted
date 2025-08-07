@@ -1,0 +1,419 @@
+{
+  "name": "Criador de Caixa Padrão",
+  "nodes": [
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "channel_api",
+          "mode": "list",
+          "cachedResultName": "channel_api"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "id": "1634e280-b472-43e7-9e30-b347e6fb73bb",
+      "name": "Postgres Trigger",
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        580,
+        420
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "4qVyUlJzBTt1tpVw",
+          "name": "Banco Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "access_tokens",
+          "mode": "list",
+          "cachedResultName": "access_tokens"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "owner_id",
+              "value": "={{ $('Puxa Usuarios').item.json[\"user_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "126f440b-49ef-4f30-ab04-d77c3b45b212",
+      "name": "Pega Token Usuario",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        940,
+        420
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "4qVyUlJzBTt1tpVw",
+          "name": "Banco Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const length = 25;  // Você pode ajustar isso conforme necessário\nconst charset = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\nlet result = \"\";\n\nfor (let i = 0; i < length; i++) {\n    result += charset.charAt(Math.floor(Math.random() * charset.length));\n}\n\nreturn [\n    {\n        json: {\n            idsessao: result\n        }\n    }\n];\n"
+      },
+      "id": "4fa907ae-5c9d-4f72-b5cb-4e8d7cb1d87b",
+      "name": "Gerador de ID Sessão",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=url da evolution api/instance/create",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "=api key da evolution"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"instanceName\": \"{{ $('Gerador de ID Sessão').item.json[\"idsessao\"] }}_Whatsapp_IdCW_{{ $('Postgres Trigger').item.json[\"payload\"][\"account_id\"] }}\",\n    \"token\": \"\",\n    \"qrcode\": true,\n    \"integration\": \"WHATSAPP-BAILEYS\",\n    \"rejectCall\": true,\n    \"msgCall\": \"Infelizmente não aceitamos ligações\",\n    \"groupsIgnore\": false,\n    \"alwaysOnline\": false,\n    \"readMessages\": true,\n    \"readStatus\": true,\n    \"syncFullHistory\": false,\n    \"chatwootAccountId\": \"{{ $('Postgres Trigger').item.json[\"payload\"][\"account_id\"] }}\",\n    \"chatwootToken\": \"{{ $('Pega Token Usuario').item.json[\"token\"] }}\",\n    \"chatwootUrl\": \"https://chatwootdocker.trecofantastico.com.br\",\n    \"chatwootSignMsg\": true,\n    \"chatwootReopenConversation\": false,\n    \"chatwootConversationPending\": false,\n    \"chatwootImportContacts\": true,\n    \"chatwootNameInbox\": \"{{ $('Pega Nome da Caixa').item.json[\"name\"] }}\",\n    \"chatwootMergeBrazilContacts\": true,\n    \"chatwootImportMessages\": true,\n    \"chatwootDaysLimitImportMessages\": 30,\n    \"chatwootOrganization\": \"Gerador de QR\",\n    \"chatwootLogo\": \"https://astraonline.com.br/wp-content/uploads/2024/08/qr.png\"\n}",
+        "options": {}
+      },
+      "id": "2c2f9035-c4ad-47c6-8292-c41f625b3767",
+      "name": "Cria API Whatsapp1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1480,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "account_users",
+          "mode": "list",
+          "cachedResultName": "account_users"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "account_id",
+              "value": "={{ $json.payload.account_id }}"
+            },
+            {
+              "column": "role",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "76c5704c-1a57-480a-b7fa-bb6bebd57b25",
+      "name": "Puxa Usuarios",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        760,
+        420
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "4qVyUlJzBTt1tpVw",
+          "name": "Banco Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "inboxes",
+          "mode": "list",
+          "cachedResultName": "inboxes"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "account_id",
+              "value": "={{ $('Postgres Trigger').item.json[\"payload\"][\"account_id\"] }}"
+            },
+            {
+              "column": "channel_id",
+              "value": "={{ $('Postgres Trigger').item.json.payload.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4876135a-6ad6-40ab-9ea6-a5ce8e4eb11d",
+      "name": "Pega Nome da Caixa",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1120,
+        420
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "4qVyUlJzBTt1tpVw",
+          "name": "Banco Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "channel_api",
+          "mode": "list",
+          "cachedResultName": "channel_api"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Postgres Trigger').item.json[\"payload\"][\"id\"] }}",
+            "account_id": "={{ $('Postgres Trigger').item.json[\"payload\"][\"account_id\"] }}",
+            "webhook_url": "={{ $('Cria API Whatsapp1').item.json[\"chatwoot\"][\"webhookUrl\"] }}",
+            "created_at": "={{ $now }}",
+            "updated_at": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "account_id",
+              "displayName": "account_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "webhook_url",
+              "displayName": "webhook_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "identifier",
+              "displayName": "identifier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "hmac_token",
+              "displayName": "hmac_token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "hmac_mandatory",
+              "displayName": "hmac_mandatory",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "additional_attributes",
+              "displayName": "additional_attributes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "21877f9c-9d03-4195-a015-0f8b6504f449",
+      "name": "Pega Nome da Caixa1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1680,
+        420
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "4qVyUlJzBTt1tpVw",
+          "name": "Banco Chatwoot"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Postgres Trigger": {
+      "main": [
+        [
+          {
+            "node": "Puxa Usuarios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerador de ID Sessão": {
+      "main": [
+        [
+          {
+            "node": "Cria API Whatsapp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pega Token Usuario": {
+      "main": [
+        [
+          {
+            "node": "Pega Nome da Caixa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa Usuarios": {
+      "main": [
+        [
+          {
+            "node": "Pega Token Usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pega Nome da Caixa": {
+      "main": [
+        [
+          {
+            "node": "Gerador de ID Sessão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria API Whatsapp1": {
+      "main": [
+        [
+          {
+            "node": "Pega Nome da Caixa1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "85890801-d1f3-4173-8a8e-f7c406dc98db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "33738330930e3881dd5571eca013f36ddf8aab20e4ea5c1f2ebaf4a2b4668ac6"
+  },
+  "id": "Ss2OEaxI8RBPjZcW",
+  "tags": []
+}
